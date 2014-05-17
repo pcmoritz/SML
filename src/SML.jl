@@ -1,5 +1,13 @@
+# (c) Philipp Moritz, 2014
+
 module SML
 
-# package code goes here
+include("Expr.jl")
 
-end # module
+include("functions/Iwata.jl")
+
+include("Sort.jl")
+include("Greedy.jl")
+include("MinNormPoint.jl")
+
+end
