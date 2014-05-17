@@ -50,3 +50,50 @@ Sigma = [  2.26105    -0.71067    0.0398137  -0.448748;
 
 F = SML.LogDet(Sigma)
 @test abs(SML.incremental(F, 1) + SML.incremental(F, 2) - SML.evaluate(F, [1, 2])) <= 1e-4
+
+# Test composition of functions
+
+p = 10
+
+mu = abs(randn(p))
+lambda = abs(randn(p))
+T = 1000 * abs(randn(p))
+
+lambda = lambda ./ (sum(lambda ./ mu) + 0.1)
+rho = lambda ./ mu
+z = rho .* T
+y = rho ./ mu
+
+G = SML.Modular(-y) * SML.Composition(x -> 1/(1.0 - x), SML.Modular(z))
+A = SML.min_norm_point(G, [1:p], 1e-10)
+
+a = SML.evaluate(G, SML.ind_to_set(A))
+
+println(a)
+
+# Test exhaustively that we really found the minimum:
+
+function powerset (x)
+  result = {{}}
+  for i in x, j = 1:length(result)
+    push!(result, [result[j],i])
+  end
+  result
+end
+
+S = powerset(1:10)
+
+for s in S
+    println(s)
+    X = Int[]
+    for x in s
+        X = [X; x]
+    end
+    println(X)
+    b = SML.evaluate(G, X)
+    println(b)
+    @test a <= b
+end
+
+
+

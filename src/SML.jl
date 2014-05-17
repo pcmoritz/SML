@@ -9,6 +9,8 @@ include("functions/Modular.jl")
 include("functions/Iwata.jl")
 include("functions/GraphCut.jl")
 include("functions/LogDet.jl")
+include("functions/Composition.jl")
+include("functions/Induced.jl")
 
 include("Sort.jl")
 include("Greedy.jl")
