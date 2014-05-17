@@ -39,6 +39,8 @@ evaluate(expr::Const, set) = expr.val
 reset(expr::Const) = begin
 end
 
+emptyval(expr::Const) = expr.val
+
 type Prod <: Expr
     first::Expr
     second::Expr
@@ -56,7 +58,7 @@ end
 incremental(expr::Prod, element::Int) = begin
     first_d = incremental(expr.first, element)
     second_d = incremental(expr.second, element)
-    incr = first_d*second_d + first_d*expr.firstval + second_d*expr.secondval
+    incr = first_d*second_d + first_d*expr.secondval + second_d*expr.firstval
     expr.accum += incr
     expr.firstval += first_d
     expr.secondval += second_d
@@ -76,7 +78,7 @@ reset(expr::Prod) = begin
 end
 
 
-*(first::Expr, second::Expr) = begin
-    return Prod(first, second)
-end
+*(first::Expr, second::Expr) = Prod(first, second)
+
+*(first::Float64, second::Expr) = Prod(Const(first), second)
 

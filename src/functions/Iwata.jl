@@ -21,13 +21,15 @@ end
 
 function evaluate(func :: IwataFunction, set :: Array{Int})
     num = sum(set)
-    len = length(set)
+    len = func.size
     result = 1.0 * num * (len - num)
     for i = 1:length(set)
       result -= (5.0 * i - 2.0 * len) * set[i]
     end
     return result;
 end
+
+emptyval(func::IwataFunction) = 0.0
 
 variables(func :: IwataFunction) = begin
     return fill([1:iround(func.size)], 1)
