@@ -6,6 +6,8 @@
 # algorithm based on the minimum-norm base. {\it Pacific Journal
 # of Optimization} {\bf 7} (2011) 3--17.
 
+const MAX_ITER = 10000
+
 function without_column(A, j)
     return [A[:,1:j-1] A[:,j+1:end]]
 end
@@ -67,7 +69,7 @@ function minimizer(func, init_perm, EPS)
     w = ones(Float64, 1)
     x = zeros(Float64, length(init_perm))
     v = zeros(Float64, 1)
-    while(true)
+    for i = 1:MAX_ITER
         fill!(x, 0.0)
         for j = 1:k
             for i = 1:n
