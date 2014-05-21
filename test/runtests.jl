@@ -18,9 +18,16 @@ f = SML.IwataFunction(1000)
 
 # Testing cut functions
 
-graph = SML.load_from_file("graph.dot")
+# graph = SML.load_from_file("graph.dot")
 
-cut_fn = SML.CutFunction(graph)
+G = [0.00000 1.00000 1.20000 0.00000 0.00000 0.00000;
+     1.30000   0.00000   1.40000   0.00000   0.00000   0.00000;
+     1.50000   1.60000   0.00000   1.70000   0.00000   0.00000;
+     0.00000   0.00000   1.80000   0.00000   1.90000   2.00000;
+     0.00000   0.00000   0.00000   2.10000   0.00000   2.20000;
+     0.00000   0.00000   0.00000   2.30000   2.40000   0.00000]
+
+cut_fn = SML.from_weight_matrix(G)
 
 # Generated from A. Krause's toolbox with
 
@@ -69,8 +76,6 @@ A = SML.min_norm_point(G, [1:p], 1e-10)
 
 a = SML.evaluate(G, SML.ind_to_set(A))
 
-println(a)
-
 # Test exhaustively that we really found the minimum:
 
 function powerset (x)
@@ -84,14 +89,11 @@ end
 S = powerset(1:10)
 
 for s in S
-    println(s)
     X = Int[]
     for x in s
         X = [X; x]
     end
-    println(X)
     b = SML.evaluate(G, X)
-    println(b)
     @test a <= b
 end
 

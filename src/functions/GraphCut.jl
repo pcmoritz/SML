@@ -3,8 +3,6 @@
 using PyCall
 using Graphs
 
-# @pyimport pydot
-
 typealias CutGraph Graph{ExVertex, ExEdge{ExVertex}}
 
 type CutFunction <: Expr
@@ -14,6 +12,23 @@ type CutFunction <: Expr
 end
 
 CutFunction(g) = CutFunction(zeros(Int, num_vertices(g)), 0.0, g)
+
+function from_weight_matrix(A)
+    g = graph(ExVertex[], ExEdge{ExVertex}[]; is_directed=true)
+    for x in 1:Base.size(A,1)
+        add_vertex!(g, ExVertex(x, string(x)))
+    end
+    V = vertices(g)
+    for j = 1:Base.size(A, 2)
+        for i = 1:Base.size(A, 1)
+            if A[i, j] != 0.0
+                e = add_edge!(g, V[i], V[j])
+                e.attributes["weight"] = A[i, j]
+            end
+        end
+    end
+    return CutFunction(g)
+end
 
 variables(func :: CutFunction) = begin
     G = func.graph
@@ -64,6 +79,11 @@ function evaluate(func :: CutFunction, set :: Array{Int}; RESET=true)
     end
     return func.val
 end
+
+# If pydot is installed in your python distribution, you can uncomment
+# the next line and use the following function:
+
+# @pyimport pydot
 
 # loading a graph from a graphviz file. we use the python library
 # "pydot" for this purpose.
