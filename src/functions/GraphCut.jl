@@ -3,7 +3,7 @@
 using PyCall
 using Graphs
 
-@pyimport pydot
+# @pyimport pydot
 
 typealias CutGraph Graph{ExVertex, ExEdge{ExVertex}}
 
