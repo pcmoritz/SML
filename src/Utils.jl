@@ -1,5 +1,3 @@
-using DataStructures
-
 # Union of two sets represented by bitsets
 function set_union(A :: Array{Int}, B :: Array{Int})
     result = zeros(Int, max(length(A), length(B)))
