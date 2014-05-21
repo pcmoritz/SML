@@ -198,3 +198,8 @@ function min_norm_point(func, init_perm, EPS=1e-10)
     return result
 end
 
+function minimize(func)
+    p = size(func)
+    result = min_norm_point(func, [1:p])
+    return ind_to_set(result)
+end

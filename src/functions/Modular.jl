@@ -2,7 +2,10 @@
 
 type Modular <: Expr
     s::Array{Float64}
+    Modular(x) = new(float64(x))
 end
+
+size(func::Modular) = Base.size(func.s, 1)
 
 emptyval(func::Modular) = 0.0
 

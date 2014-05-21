@@ -20,3 +20,7 @@ include("Greedy.jl")
 include("MinNormPoint.jl")
 
 end
+
+# Functions overloaded from global namespace:
+
+apply(expr::SML.Expr, set::Vector{Int}) = SML.evaluate(expr, set)
