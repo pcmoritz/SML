@@ -23,4 +23,5 @@ This will give `[11]` as a result. You can also call
 where the second argument is the ordering the minimum norm point will
 be initialized with and `1e-12` is the duality gap to be achieved for
 the minimum norm point (which roughly corresponds to the precision of
-the minimum).
+the minimum). This will return an indicator array `A` with `A[i] =
+1.0` if `i` is in the set and `A[i] = 0.0` otherwise.
