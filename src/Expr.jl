@@ -2,10 +2,6 @@
 
 abstract Expr
 
-type Set
-    elements::Int
-end
-
 type Sum <: Expr
     first::Expr
     second::Expr

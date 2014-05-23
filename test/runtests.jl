@@ -71,8 +71,8 @@ rho = lambda ./ mu
 z = rho .* T
 y = rho ./ mu
 
-G = SML.Modular(-y) * SML.Composition(x -> 1/(1.0 - x), SML.Modular(z))
-A = SML.min_norm_point(G, [1:p], 1e-10)
+G = SML.Modular(z) + SML.Modular(-y) * SML.Composition(x -> 1/(1.0 - x), SML.Modular(rho))
+A = SML.min_norm_point(G, [1:p], 1e-13)
 
 a = SML.evaluate(G, SML.ind_to_set(A))
 
@@ -98,4 +98,9 @@ for s in S
 end
 
 
+# Test set cover functions
 
+F = SML.TreeCoverFunction(3)
+G = SML.SetCoverFunction([Set(1), Set(1, 2), Set(1, 2, 4), Set(1, 2, 5), Set(1, 3), Set(1, 3, 6), Set(1, 3, 7)])
+
+@test SML.evaluate(F, [1, 3]) == SML.evaluate(F, [1, 3])

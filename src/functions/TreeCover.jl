@@ -51,3 +51,13 @@ incremental(func :: TreeCoverFunction, element :: Int) = begin
     end
     return func.value - result
 end
+
+function evaluate(func :: TreeCoverFunction, set :: Array{Int}; RESET=true)
+    if RESET
+        reset(func)
+    end
+    for elt in set
+        incremental(func, elt)
+    end
+    return func.value
+end
