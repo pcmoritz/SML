@@ -11,6 +11,7 @@ end
 LogDet(sigma::Array{Float64, 2}) = begin
     n = Base.size(sigma, 1)
     @assert n == Base.size(sigma, 2)
+    @assert isposdef(sigma)
     LogDet(sigma, BitArray(n), zeros(n, n), 1.0, 0)
 end
 
@@ -49,3 +50,7 @@ function chol_update!(sigma::Array{Float64, 2}, A, index, chol, k)
     k += 1
     return k
 end
+
+
+# assume here that sigma is pos def (see the assert in the constructor)
+curvature(expr::LogDet) = :submodular

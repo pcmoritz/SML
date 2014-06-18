@@ -38,3 +38,5 @@ function evaluate(func :: SetCoverFunction, set :: Array{Int}; RESET=true)
 end
 
 emptyval(func::SetCoverFunction) = 0.0
+
+curvature(func::SetCoverFunction) = :submodular

@@ -35,3 +35,6 @@ variables(func :: IwataFunction) = begin
     return fill([1:iround(func.size)], 1)
 end
 
+curvature(func :: IwataFunction) = :submodular
+
+

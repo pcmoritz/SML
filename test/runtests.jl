@@ -29,6 +29,8 @@ G = [0.00000 1.00000 1.20000 0.00000 0.00000 0.00000;
 
 cut_fn = SML.from_weight_matrix(G)
 
+@test SML.curvature(cut_fn) == :submodular
+
 # Generated from A. Krause's toolbox with
 
 # G=[0 1 1 0 0 0; 1 0 1 0 0 0; 1 1 0 1 0 0; 0 0 1 0 1 1; 0 0 0 1 0 1; 0 0 0 1 1 0];
@@ -104,3 +106,14 @@ F = SML.TreeCoverFunction(3)
 G = SML.SetCoverFunction([Set(1), Set(1, 2), Set(1, 2, 4), Set(1, 2, 5), Set(1, 3), Set(1, 3, 6), Set(1, 3, 7)])
 
 @test SML.evaluate(F, [1, 3]) == SML.evaluate(F, [1, 3])
+
+A = SML.Modular([1, 2, 3])
+B = SML.Modular([3, 4, 5])
+
+F = A + B
+
+@test SML.curvature(F) == :modular
+
+C = SML.IwataFunction(3)
+
+@test SML.curvature(A + C) == :submodular

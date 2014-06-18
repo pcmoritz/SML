@@ -24,6 +24,8 @@ end
 reset(func :: Modular) = begin
 end
 
+curvature(func :: Modular) = :modular
+
 variables(func :: Modular) = begin
     return singleton_partition(length(func.s))
 end

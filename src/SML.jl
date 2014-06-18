@@ -3,6 +3,7 @@
 module SML
 
 include("Utils.jl")
+include("DSR.jl")
 include("Expr.jl")
 
 include("functions/Modular.jl")

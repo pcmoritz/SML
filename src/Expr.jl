@@ -20,6 +20,9 @@ incremental(expr::Sum,element::Int) =
 evaluate(expr::Sum, set) =
     evaluate(expr.first, set) + evaluate(expr.second, set)
 
+curvature(expr::Sum) =
+    plus(curvature(expr.first), curvature(expr.second))
+
 +(first::Expr, second::Expr) = begin
     return Sum(first, second)
 end

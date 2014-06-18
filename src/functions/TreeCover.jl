@@ -61,3 +61,5 @@ function evaluate(func :: TreeCoverFunction, set :: Array{Int}; RESET=true)
     end
     return func.value
 end
+
+curvature(func::TreeCoverFunction) = :submodular

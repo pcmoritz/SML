@@ -30,6 +30,25 @@ function from_weight_matrix(A)
     return CutFunction(g)
 end
 
+curvature(func :: CutFunction) = begin
+    all_pos = true
+    all_neg = true
+    for e in Graphs.edges(func.graph)
+        all_pos = all_pos && e.attributes["weight"] >= 0.0
+        all_neg = all_neg && e.attributes["weight"] <= 0.0
+    end
+    if all_pos && all_neg
+        return :modular
+    end
+    if all_pos
+        return :submodular
+    end
+    if all_neg
+        return :supmodular
+    end
+    return :unknown
+end
+
 variables(func :: CutFunction) = begin
     G = func.graph
     V = map(vertex_index, vertices(G))
