@@ -76,6 +76,23 @@ reset(expr::Prod) = begin
     expr.accum = expr.firstval * expr.secondval
 end
 
+curvature(expr::Prod) = begin
+    submodular = true
+    if !(curvature(expr.first) == :submodular &&
+         monotonicity(expr.first) == :increasing &&
+         signature(expr.first) == :pos)
+        submodular = false
+    end
+    if !(curvature(expr.second) == :submodular &&
+         monotonicity(expr.second) == :increasing &&
+         signature(expr.second) == :pos)
+        submodular = false
+    end
+    if submodular
+        return :submodular
+    end
+end
+
 
 *(first::Expr, second::Expr) = Prod(first, second)
 

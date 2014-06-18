@@ -30,6 +30,10 @@ G = [0.00000 1.00000 1.20000 0.00000 0.00000 0.00000;
 cut_fn = SML.from_weight_matrix(G)
 
 @test SML.curvature(cut_fn) == :submodular
+@test SML.signature(cut_fn) == :pos
+
+# More a test of the submodular ruleset:
+@test SML.curvature(cut_fn * cut_fn) == :submodular
 
 # Generated from A. Krause's toolbox with
 

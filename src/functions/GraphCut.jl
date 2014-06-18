@@ -30,13 +30,18 @@ function from_weight_matrix(A)
     return CutFunction(g)
 end
 
-curvature(func :: CutFunction) = begin
+function weight_signs(func::CutFunction)
     all_pos = true
     all_neg = true
     for e in Graphs.edges(func.graph)
         all_pos = all_pos && e.attributes["weight"] >= 0.0
         all_neg = all_neg && e.attributes["weight"] <= 0.0
     end
+    return (all_pos, all_neg)
+end
+
+curvature(func::CutFunction) = begin
+    (all_pos, all_neg) = weight_signs(func)
     if all_pos && all_neg
         return :modular
     end
@@ -45,6 +50,28 @@ curvature(func :: CutFunction) = begin
     end
     if all_neg
         return :supmodular
+    end
+    return :unknown
+end
+
+monotonicity(func::CutFunction) = begin
+    (all_pos, all_neg) = weight_signs(func)
+    if all_pos
+        return :increasing
+    end
+    if all_neg
+        return :decreasing
+    end
+    return :unknown
+end
+
+signature(func::CutFunction) = begin
+    (all_pos, all_neg) = weight_signs(func)
+    if all_pos
+        return :pos
+    end
+    if all_neg
+        return :neg
     end
     return :unknown
 end
@@ -62,10 +89,12 @@ variables(func :: CutFunction) = begin
 end
 
 # reset the incremental oracle
-function reset(func :: CutFunction)
+function reset(func::CutFunction)
     func.val = 0.0
     func.set = zeros(Int, length(func.set))
 end
+
+emptyval(func::CutFunction) = 0.0
 
 # evaluate one step of the incremental oracle
 function incremental(func :: CutFunction, element :: Int)
