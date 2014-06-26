@@ -3,7 +3,7 @@
 function polytope_corner!(func, v, result)
     reset(func)
     min_val = typemax(Float64)
-    acc = 0.0
+    acc = emptyval(func)
     for i = 1:length(v)
         result[v[i]] = incremental(func, v[i])
         acc += result[v[i]]

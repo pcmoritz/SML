@@ -12,6 +12,7 @@ include("functions/GraphCut.jl")
 include("functions/LogDet.jl")
 include("functions/SetCover.jl")
 include("functions/TreeCover.jl")
+include("functions/Ising.jl")
 include("functions/Composition.jl")
 include("functions/Induced.jl")
 

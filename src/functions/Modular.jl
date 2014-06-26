@@ -21,11 +21,31 @@ incremental(func::Modular, element::Int) = begin
     return func.s[element]
 end
 
-reset(func :: Modular) = begin
+reset(func::Modular) = begin
 end
 
-curvature(func :: Modular) = :modular
+curvature(func::Modular) = :modular
 
-variables(func :: Modular) = begin
+monotonicity(func::Modular) = begin
+    if all(func.s .>= 0.0)
+        return :increasing
+    end
+    if all(func.s .<= 0.0)
+        return :decreasing
+    end
+    return :unknown
+end
+
+signature(func::Modular) = begin
+    if all(func.s .>= 0.0)
+        return :pos
+    end
+    if all(func.s .<= 0.0)
+        return :neg
+    end
+    return :unknown
+end
+
+variables(func::Modular) = begin
     return singleton_partition(length(func.s))
 end

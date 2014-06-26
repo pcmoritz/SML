@@ -70,12 +70,7 @@ function minimizer(func, init_perm, EPS)
     x = zeros(Float64, length(init_perm))
     v = zeros(Float64, 1)
     for i = 1:MAX_ITER
-        fill!(x, 0.0)
-        for j = 1:k
-            for i = 1:n
-                x[i] += S[i,j] * w[j]
-            end
-        end
+        A_mul_B!(x, sub(S, 1:n, 1:k), sub(w, 1:k))
 
         min_F = greedy(func, x, data, s)
 
@@ -105,12 +100,15 @@ function minimizer(func, init_perm, EPS)
             end
         end
 
-        fill!(v, 0.0)        
-        for j = 1:k
-            for i = 1:n
-                v[j] += s[i] * S[i,j]
-            end
-        end
+        # fill!(v, 0.0)        
+        # for j = 1:k
+        #     for i = 1:n
+        #         v[j] += s[i] * S[i,j]
+        #     end
+        # end
+        
+        At_mul_B!(v, sub(S, 1:n, 1:k), s)
+
         for j = 1:k
             v[j] += 1.0
         end

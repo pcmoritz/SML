@@ -37,7 +37,8 @@ cut_fn = SML.from_weight_matrix(G)
 
 # Generated from A. Krause's toolbox with
 
-# G=[0 1 1 0 0 0; 1 0 1 0 0 0; 1 1 0 1 0 0; 0 0 1 0 1 1; 0 0 0 1 0 1; 0 0 0 1 1 0];
+# G=[0 1 1 0 0 0; 1 0 1 0 0 0; 1 1 0 1 0 0;
+#    0 0 1 0 1 1; 0 0 0 1 0 1; 0 0 0 1 1 0];
 # F_cut_fun = sfo_fn_cutfun(G);
 # F_iw = sfo_fn_iwata(6);
 # F = sfo_fn_lincomb([F_iw, F_cut_fun], [0.2, 1.0]);
@@ -121,3 +122,30 @@ F = A + B
 C = SML.IwataFunction(3)
 
 @test SML.curvature(A + C) == :submodular
+
+# Test disciplined submodular programming
+
+F = SML.Modular(rand(10))
+@test SML.curvature(F * F) == :submodular
+
+# Test Ising function
+
+D = 100
+S = 30
+
+img = zeros(Int, D, D)
+img[S:(D-S), S:(D-S)] = 1
+
+p = 0.2 # probability for pixel error
+mask = rand(size(img)) .> 1-p
+
+img[mask] = 1 .- img[mask]
+
+ising = SML.IsingFunction(img, 1.0, 1.0, 1.0, 0.0)
+
+SML.evaluate_image(ising, img)
+
+A = SML.min_norm_point(ising, [1:D*D], 1e-12)
+result = convert(Array{Int, 2}, reshape(A, (D, D)))
+
+@test abs(SML.emptyval(ising) + SML.incremental(ising, 1) + SML.incremental(ising, 2) + SML.incremental(ising, 12) - SML.evaluate(ising, [1, 2, 12])) <= 1e-4

@@ -2,6 +2,11 @@
 
 abstract Expr
 
+submodular(func) = begin
+    curv = curvature(func)
+    return (curv == :modular) || (curv == :submodular)
+end
+
 type Sum <: Expr
     first::Expr
     second::Expr
@@ -77,20 +82,21 @@ reset(expr::Prod) = begin
 end
 
 curvature(expr::Prod) = begin
-    submodular = true
-    if !(curvature(expr.first) == :submodular &&
+    submod = true
+    if !(submodular(expr.first) &&
          monotonicity(expr.first) == :increasing &&
          signature(expr.first) == :pos)
-        submodular = false
+        submod = false
     end
-    if !(curvature(expr.second) == :submodular &&
+    if !(submodular(expr.second) &&
          monotonicity(expr.second) == :increasing &&
          signature(expr.second) == :pos)
-        submodular = false
+        submod = false
     end
-    if submodular
+    if submod
         return :submodular
     end
+    return :unknown
 end
 
 
