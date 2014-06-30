@@ -13,21 +13,18 @@ end
 
 CutFunction(g) = CutFunction(zeros(Int, num_vertices(g)), 0.0, g)
 
-function from_weight_matrix(A)
-    g = graph(ExVertex[], ExEdge{ExVertex}[]; is_directed=true)
+function from_weight_matrix(A; is_directed=true)
+    g = graph(ExVertex[], ExEdge{ExVertex}[]; is_directed=is_directed)
     for x in 1:Base.size(A,1)
         add_vertex!(g, ExVertex(x, string(x)))
     end
     V = vertices(g)
-    for j = 1:Base.size(A, 2)
-        for i = 1:Base.size(A, 1)
-            if A[i, j] != 0.0
-                e = add_edge!(g, V[i], V[j])
-                e.attributes["weight"] = A[i, j]
-            end
-        end
+    (I, J, val) = findnz(A)
+    for i = 1:length(I)
+        e = add_edge!(g, V[I[i]], V[J[i]])
+        e.attributes["weight"] = val[i]
     end
-    return CutFunction(g)
+    return g
 end
 
 function weight_signs(func::CutFunction)
@@ -91,13 +88,13 @@ end
 # reset the incremental oracle
 function reset(func::CutFunction)
     func.val = 0.0
-    func.set = zeros(Int, length(func.set))
+    fill!(func.set, 0)
 end
 
 emptyval(func::CutFunction) = 0.0
 
 # evaluate one step of the incremental oracle
-function incremental(func :: CutFunction, element :: Int)
+function incremental(func::CutFunction, element::Int)
     temp = func.val
     g = func.graph
     x = vertices(g)[element]
@@ -118,7 +115,7 @@ function incremental(func :: CutFunction, element :: Int)
 end
 
 # evaluate the whole function at once
-function evaluate(func :: CutFunction, set :: Array{Int}; RESET=true)
+function evaluate(func::CutFunction, set::Array{Int}; RESET=true)
     if RESET
         reset(func)
     end

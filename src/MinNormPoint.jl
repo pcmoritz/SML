@@ -6,6 +6,8 @@
 # algorithm based on the minimum-norm base. {\it Pacific Journal
 # of Optimization} {\bf 7} (2011) 3--17.
 
+import Base.LinAlg: BlasFloat, BlasChar, BlasInt
+
 const MAX_ITER = 10000
 
 function without_column(A, j)
@@ -49,6 +51,18 @@ function tridiagonalize(R, k)
             R[j+1,jj] = y
         end
     end
+end
+
+# Eliminate some expensive checks
+function unsafe_trtrs!(uplo::BlasChar, trans::BlasChar, diag::BlasChar,
+                       A::StridedMatrix{Float64}, B::StridedVecOrMat{Float64}, n::Int)
+    info = Array(BlasInt, 1)
+    ccall((:dtrtrs_,"liblapack"), Void,
+          (Ptr{BlasChar}, Ptr{BlasChar}, Ptr{BlasChar}, Ptr{BlasInt}, Ptr{BlasInt},
+           Ptr{Float64}, Ptr{BlasInt}, Ptr{Float64}, Ptr{BlasInt}, Ptr{BlasInt}),
+          &uplo, &trans, &diag, &n, &Base.size(B,2), A, &max(1,stride(A,2)),
+          B, &max(1,stride(B,2)), info)
+    B
 end
 
 function minimizer(func, init_perm, EPS)
@@ -114,7 +128,7 @@ function minimizer(func, init_perm, EPS)
         end
         
         # v = S[:,1:k].' * s +  ones(Float64, k)
-        r = LAPACK.trtrs!('U', 'T', 'N', R[1:k,1:k], v)
+        r = unsafe_trtrs!('U', 'T', 'N', R[1:k,1:k], v, k)
         # r = R[1:k,1:k].' \ v
         rho = sqrt(1.0 + ss - dot(r, r))
         newcol = [r, rho, zeros(Float64, length(init_perm) - k - 1)]
@@ -134,9 +148,9 @@ function minimizer(func, init_perm, EPS)
         while(true)
             rhs = ones(Float64, k)
             # ubar = Triangular(R[1:k,1:k].') \ rhs
-            ubar = LAPACK.trtrs!('U', 'T', 'N', R[1:k,1:k], rhs)
+            ubar = unsafe_trtrs!('U', 'T', 'N', R[1:k,1:k], rhs, k)
             # u = Triangular(R[1:k,1:k]) \ ubar
-            u = LAPACK.trtrs!('U', 'N', 'N', R[1:k,1:k], ubar)
+            u = unsafe_trtrs!('U', 'N', 'N', R[1:k,1:k], ubar, k)
             usum = sum(u)
             v = u / usum
 

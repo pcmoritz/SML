@@ -65,9 +65,9 @@ function incremental(func::IsingFunction, element::Int)
         end
     end
     if func.img[x,y] == 1
-        func.value -= 1.0
+        func.value -= func.coeffPix
     else
-        func.value += 1.0
+        func.value += func.coeffPix
     end
     return func.value - lastvalue
 end

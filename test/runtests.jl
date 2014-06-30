@@ -27,7 +27,7 @@ G = [0.00000 1.00000 1.20000 0.00000 0.00000 0.00000;
      0.00000   0.00000   0.00000   2.10000   0.00000   2.20000;
      0.00000   0.00000   0.00000   2.30000   2.40000   0.00000]
 
-cut_fn = SML.from_weight_matrix(G)
+cut_fn = SML.CutFunction(SML.from_weight_matrix(G))
 
 @test SML.curvature(cut_fn) == :submodular
 @test SML.signature(cut_fn) == :pos
@@ -149,3 +149,23 @@ A = SML.min_norm_point(ising, [1:D*D], 1e-12)
 result = convert(Array{Int, 2}, reshape(A, (D, D)))
 
 @test abs(SML.emptyval(ising) + SML.incremental(ising, 1) + SML.incremental(ising, 2) + SML.incremental(ising, 12) - SML.evaluate(ising, [1, 2, 12])) <= 1e-4
+
+# Testing GraphIntensity function
+
+A = [0.0 1.0 1.0 0.0 0.0 0.0 0.0;
+     0.0 0.0 1.0 1.0 0.0 0.0 0.0;
+     0.0 0.0 0.0 0.0 1.0 1.0 0.0;
+     0.0 0.0 0.0 0.0 1.0 0.0 1.0;
+     0.0 0.0 0.0 0.0 0.0 1.0 1.0;
+     0.0 0.0 0.0 0.0 0.0 0.0 0.0;
+     0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+
+g = SML.from_weight_matrix(A; is_directed=false)
+
+intensity = SML.GraphIntensity(g)
+
+@test abs(SML.incremental(intensity, 1) - 0.0) <= 1e-4
+@test abs(SML.incremental(intensity, 2) - 1.0) <= 1e-4
+@test abs(SML.incremental(intensity, 3) - 2.0) <= 1e-4
+@test abs(SML.incremental(intensity, 4) - 1.0) <= 1e-4
+@test abs(SML.incremental(intensity, 5) - 2.0) <= 1e-4
