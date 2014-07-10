@@ -22,8 +22,8 @@ function IsingFunction(img::Array{Int,2}, coeffPix, coeffH, coeffV, coeffD)
             value += abs(img[i,j])
         end
     end
-    return IsingFunction(img, zeros(height,width), height, width, coeffPix*value, coeffPix*value,
-                         coeffPix, coeffH, coeffV, coeffD)
+    return IsingFunction(img, zeros(height,width), height, width, coeffPix*value,
+                         coeffPix*value, coeffPix, coeffH, coeffV, coeffD)
 end
 
 function reset(func::IsingFunction)
@@ -36,7 +36,7 @@ emptyval(func::IsingFunction) = func.initial_value
 # Assume the bit at element is not set before this function is called
 function incremental(func::IsingFunction, element::Int)
     lastvalue = func.value
-    (x, y) = divrem(element-1, func.height)
+    (x, y) = divrem(element-1, func.width)
     x = x + 1
     y = y + 1
     func.mask[x,y] = 1
@@ -48,17 +48,17 @@ function incremental(func::IsingFunction, element::Int)
     end
     if  y > 1
         func.value += (1 - 2*func.mask[x, y-1]) * func.coeffV
-        if x < func.width
+        if x < func.height
             func.value += (1 - 2*func.mask[x+1,y-1]) * func.coeffD
         end
     end
-    if x < func.width
+    if x < func.height
         func.value += (1 - 2*func.mask[x+1,y]) * func.coeffH
         if y < func.width
             func.value += (1 - 2*func.mask[x+1,y+1]) * func.coeffD
         end
     end
-    if y < func.height
+    if y < func.width
         func.value += (1 - 2*func.mask[x, y+1]) * func.coeffV
         if x > 1
             func.value += (1 - 2*func.mask[x-1,y+1]) * func.coeffD
@@ -76,7 +76,7 @@ end
 function evaluate(func::IsingFunction, set::Array{Int})
     image = zeros(Int, func.height, func.width)
     for element in set
-        (x, y) = divrem(element-1, func.height)
+        (x, y) = divrem(element-1, func.width)
         x = x + 1
         y = y + 1
         image[x, y] = 1

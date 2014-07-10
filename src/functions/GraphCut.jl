@@ -13,6 +13,8 @@ end
 
 CutFunction(g) = CutFunction(zeros(Int, num_vertices(g)), 0.0, g)
 
+size(func::CutFunction) = num_vertices(func.graph)
+
 function from_weight_matrix(A; is_directed=true)
     g = graph(ExVertex[], ExEdge{ExVertex}[]; is_directed=is_directed)
     for x in 1:Base.size(A,1)
@@ -112,6 +114,26 @@ function incremental(func::CutFunction, element::Int)
     end
     func.set[element] = 1
     return func.val - temp
+end
+
+# undo the effect of incremental(func, element); only guaranteed to
+# work if incremental(func, element) has been called before
+function reset(func::CutFunction, element::Int)
+    g = func.graph
+    x = vertices(g)[element]
+    for e in out_edges(x, g)
+        v = target(e, g).index
+        if func.set[v] == 0
+            func.val -= e.attributes["weight"]
+        end
+    end
+    for e in in_edges(x, g)
+        v = source(e, g).index
+        if func.set[v] == 1
+            func.val += e.attributes["weight"]
+        end
+    end
+    func.set[element] = 0
 end
 
 # evaluate the whole function at once

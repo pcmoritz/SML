@@ -20,14 +20,19 @@ f = SML.IwataFunction(1000)
 
 # graph = SML.load_from_file("graph.dot")
 
-G = [0.00000 1.00000 1.20000 0.00000 0.00000 0.00000;
-     1.30000   0.00000   1.40000   0.00000   0.00000   0.00000;
-     1.50000   1.60000   0.00000   1.70000   0.00000   0.00000;
-     0.00000   0.00000   1.80000   0.00000   1.90000   2.00000;
-     0.00000   0.00000   0.00000   2.10000   0.00000   2.20000;
-     0.00000   0.00000   0.00000   2.30000   2.40000   0.00000]
+G = [0.0  1.0  1.2  0.0  0.0  0.0;
+     1.3  0.0  1.4  0.0  0.0  0.0;
+     1.5  1.6  0.0  1.7  0.0  0.0;
+     0.0  0.0  1.8  0.0  1.9  2.0;
+     0.0  0.0  0.0  2.1  0.0  2.2;
+     0.0  0.0  0.0  2.3  2.4  0.0]
 
 cut_fn = SML.CutFunction(SML.from_weight_matrix(G))
+
+keys = zeros(Float64, SML.size(cut_fn))
+used = zeros(Int, SML.size(cut_fn))
+
+SML.pendentpair!(cut_fn, keys, used)
 
 @test SML.curvature(cut_fn) == :submodular
 @test SML.signature(cut_fn) == :pos
@@ -169,3 +174,4 @@ intensity = SML.GraphIntensity(g)
 @test abs(SML.incremental(intensity, 3) - 2.0) <= 1e-4
 @test abs(SML.incremental(intensity, 4) - 1.0) <= 1e-4
 @test abs(SML.incremental(intensity, 5) - 2.0) <= 1e-4
+
