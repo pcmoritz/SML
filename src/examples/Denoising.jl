@@ -29,13 +29,16 @@ img = convert(Array, imread("denoise.ppm"))
 
 # convert to 0/1
 data = 1 * (img[:,:,3] .!= 0xff)
-p = 0.1
+p = 0.04
 mask = rand(size(data)) .> 1-p
 
 new = copy(data)
 new[mask] = 1 - new[mask]
 new_img = Image(255*(1-new))
 ImageView.display(new_img)
+
+# this works:
+# ising = SML.IsingFunction(new, 6.0, 1.0, 1.0, 1.0)
 
 ising = SML.IsingFunction(new, 6.0, 1.0, 1.0, 1.0)
 
