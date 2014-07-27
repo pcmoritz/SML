@@ -2,6 +2,8 @@
 
 module SML
 
+import Base.size
+
 include("Utils.jl")
 include("DSR.jl")
 include("Expr.jl")
@@ -22,6 +24,6 @@ include("extras/ProxOperator.jl")
 include("Sort.jl")
 include("Greedy.jl")
 include("MinNormPoint.jl")
-# include("Queyranne.jl")
+include("Queyranne.jl")
 
 end

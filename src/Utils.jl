@@ -60,7 +60,7 @@ function singleton_partition(n)
 end
 
 # Convert an indicator function 1_A to the set A
-function ind_to_set(ind::Vector{Float64})
+function ind_to_set(ind)
     A = Int[]
     for i = 1:length(ind)
         if ind[i] > 0.5
@@ -69,4 +69,5 @@ function ind_to_set(ind::Vector{Float64})
     end
     return A
 end
+
 

@@ -94,6 +94,7 @@ function reset(func::CutFunction)
 end
 
 emptyval(func::CutFunction) = 0.0
+currval(func::CutFunction) = func.val
 
 # evaluate one step of the incremental oracle
 function incremental(func::CutFunction, element::Int)

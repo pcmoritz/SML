@@ -13,7 +13,6 @@ using Graphs
 type Induced <: Expr
     func::Expr
     G::Vector{Vector{Int}}
-    p::Int
     set::Vector{Int} # Nodes on the right side already accounted for
 end
 
@@ -30,14 +29,26 @@ Induced(func::Expr, G::Array{Int, 2}) = begin
         end
         graph[i] = accum
     end
-    return Induced(func, graph, p, fill(0, q))
+    return Induced(func, graph, fill(0, q))
 end
+
+size(expr::Induced) = Base.length(expr.G)
 
 reset(expr::Induced) = begin
     fill!(expr.set, 0)
 end
 
+reset(expr::Induced, element::Int) = begin
+    for next = reverse(expr.G[element])
+        if expr.set[next] == 1
+            reset(expr.func, next)
+            expr.set[next] = 0
+        end
+    end
+end
+
 emptyval(expr::Induced) = emptyval(expr.func)
+currval(expr::Induced) = currval(expr.func)
 
 incremental(expr::Induced, element::Int) = begin
     acc = 0.0

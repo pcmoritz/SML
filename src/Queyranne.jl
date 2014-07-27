@@ -1,73 +1,41 @@
 using DataStructures
 
-# assumes that V[1:k] is sorted, and that element is in V[1:k]
-function setdiff!(V::Vector{Int}, element::Int, k::Int)
-    index = 1
-    while index <= k
-        if V[index] == element
-            break
-        end
-        index += 1
-    end
-    while index < k
-        V[index] = V[index+1]
-        index += 1
-    end
-end
-
-function pendentpair!(func::Expr, keys::Vector{Float64}, used::Vector{Int}, V::Vector{Int}, k::Int)
+function pendentpair!(func::Expr, keys::Vector{Float64}, singleton::Vector{Float64})
     reset(func)
-    fill!(used, 0)
-    vnew = V[1]
+    k = size(func)
+    fill!(singleton, 0.0)
+    vnew = 1
     vold = -1
-    used[vnew] = 1
+    for i = 1:k
+        singleton[i] = incremental(func, i)
+        reset(func, i)
+    end
     for i = 1:(k-1)
         vold = vnew
-        incremental(func, vold)
+        prev_val = incremental(func, i)
         fill!(keys, Inf)
-        for j = 1:k
-            if used[j] == 1
-                continue
-            end
-            keys[j] = incremental(func, V[j])
-            reset(func, V[j])
+        for j = i:k
+            incremental(func, j)
+            keys[j] = currval(func) - singleton[j]
+            print("keys ")
+            print(j)
+            print(" ")
+            print(keys[j])
+            print("\n")
+            reset(func, j)
         end
         argmin = -1
         curr_min = Inf
-        for j = 1:n
+        for j = i:k
             if keys[j] <= curr_min
                 argmin = j
                 curr_min = keys[j]
             end
         end
-        vnew = V[argmin]
-        used[argmin] = 1
+        vnew = argmin
     end
     return (vold, vnew)
 end
-
-function append!{T}(first::DLList{T}, second::DLList{T})
-    first_len = length(first)
-    second_len = length(second)
-    second_last = second.prev
-    first.prev.next = second.next
-    second.prev.next = first.next
-    second.next.prev = first.prev
-    first.next.prev = second_last
-    first.prev = second_last
-    first.length = first_len + second_len
-end
-
-# first = DLList{Int}()
-# second = DLList{Int}()
-# push(first, 0)
-# push(first, 1)
-# push(second, 2)
-# push(second, 3)
-# append!(first, second)
-# third = DLList{Int}()
-# push(third, 4)
-# append!(first, third)
 
 function merge!(partitions, j, k)
     n = Base.length(partitions)
@@ -90,13 +58,24 @@ function queyranne(func::Expr)
     for i = 1:p
         partitions[i] = [i]
     end
-    merged_fun = Induced(func, partitions, p, fill(0, p))
+    merged_fun = Induced(func, partitions, fill(0, p))
+    singleton = zeros(Float64, p)
     keys = zeros(Float64, p)
+    min_val = Inf
+    min_set = [-1]
     for i = 1:(p-1)
-        (t, u) = pendentpair!(func, V, keys, k)
-        # merge nodes u and t
-        union!(G, t, u)
-        setdiff!(V, u, k)
-        k -= 1
+        (t, u) = pendentpair!(merged_fun, keys, singleton)
+        println("t ", t, " u ", u)
+        reset(merged_fun)
+        val = incremental(merged_fun, u)
+        reset(merged_fun, u)
+        if val <= min_val
+            min_val = val
+            min_set = partitions[u]
+        end
+        partitions = merge!(partitions, t, u)
+        merged_fun.G = partitions
     end
+    println(min_val)
+    println(min_set)
 end
