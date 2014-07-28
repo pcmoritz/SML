@@ -1,4 +1,7 @@
 # (c) Philipp Moritz, 2014
+# This implements the log determinant function; i.e. given a matrix M, 
+# the function computes F(X) = \log\det M_X where X is a set of 
+# indices that define a submatrix of M.
 
 type LogDet <: Expr
     sigma::Array{Float64, 2}
@@ -29,6 +32,9 @@ incremental(expr::LogDet, element::Int) = begin
 end
 
 evaluate(expr::LogDet, set::Vector{Int}) = log(det(expr.sigma[set, set]))
+size(expr::LogDet) = Base.size(expr.sigma, 1)
+
+emptyval(expr::LogDet) = 0.0
 
 # Based on the implementation of Andreas Krause, originally from Ram
 # Rajagopal, see sfo_chol_update.m
