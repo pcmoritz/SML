@@ -3,6 +3,17 @@ using Base.Test
 
 cd(Pkg.dir("SML") * "/test/")
 
+# Testing Iwata's function
+
+iwata = SML.IwataFunction(100)
+@test SML.currval(iwata) <= 1e-5
+SML.incremental(iwata, 5)
+@test (SML.currval(iwata) - 274.0) <= 1e-5
+SML.incremental(iwata, 4)
+@test (SML.currval(iwata) - 551.0) <= 1e-5
+SML.reset(iwata, 5)
+@test (SML.currval(iwata) - SML.evaluate(iwata, [4])) <= 1e-5
+
 reload("OldGreedy.jl")
 reload("OldMinNormPoint.jl")
 

@@ -1,4 +1,6 @@
 # (c) Philipp Moritz, 2014
+# Let G = (V, E, w) be a graph with weights; the cut function is given by
+# F(X) = \sum_{i\in X, j\in V\X} w_{ij}
 
 using PyCall
 using Graphs
@@ -101,6 +103,7 @@ function incremental(func::CutFunction, element::Int)
     temp = func.val
     g = func.graph
     x = vertices(g)[element]
+    func.set[element] = 1
     for e in out_edges(x, g)
         v = target(e, g).index
         if func.set[v] == 0
@@ -113,7 +116,6 @@ function incremental(func::CutFunction, element::Int)
             func.val -= e.attributes["weight"]
         end
     end
-    func.set[element] = 1
     return func.val - temp
 end
 
