@@ -5,7 +5,7 @@ type IwataFunction <: Expr
     num::Float64
 end
 
-IwataFunction(n) = IwataFunction(1.0 * n, 0)
+IwataFunction(n) = IwataFunction(1.0 * n, 0.0)
 
 function reset(func::IwataFunction)
     func.num = 0.0

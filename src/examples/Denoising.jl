@@ -9,7 +9,6 @@ img[S:(D-S), S:(D+10-S)] = 1
 
 p = 0.2 # probability for pixel error
 mask = rand(size(img)) .> 1-p
-
 img[mask] = 1 .- img[mask]
 
 ImageView.display(Image(255*img))

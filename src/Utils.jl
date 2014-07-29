@@ -1,3 +1,6 @@
+# (c) Philipp Moritz, 2014
+# Some utitities for the Julia submodular minimization module SML
+
 # Union of two sets represented by bitsets
 function set_union(A :: Array{Int}, B :: Array{Int})
     result = zeros(Int, max(length(A), length(B)))
@@ -70,4 +73,12 @@ function ind_to_set(ind)
     return A
 end
 
+# Convert the set A to the indicator function 1_A
+function set_to_ind(set, p)
+    ind = zeros(Int, p)
+    for i = set
+        ind[i] = 1
+    end
+    return ind
+end
 

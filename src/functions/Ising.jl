@@ -1,4 +1,9 @@
-# The ising model for image denoising, the image is nxm and the
+# (c) Philipp Moritz, 2014
+# The ising model for image denoising. Let I be a rectangular reference image, then
+# F(X) = coeffPix * \sum_{ij} |X_{ij} - I_{ij}| +
+#        coeffH * \sum_{ij} \sum_{kl horiz neighbor of ij} |X_{ij} - X_{kl}| +
+#        coeffV * \sum_{ij} \sum_{kl vert neighbor of ij} |X_{ij} - X_{kl}| +
+#        coeffD * \sum_{ij} \sum_{kl diag neighbor of ij} |X_{ij} - X_{kl}|
 
 type IsingFunction <: Expr
     img::Array{Int, 2}
@@ -32,6 +37,7 @@ function reset(func::IsingFunction)
 end
 
 emptyval(func::IsingFunction) = func.initial_value
+currval(func::IsingFunction) = func.value
 
 # Assume the bit at element is not set before this function is called
 function incremental(func::IsingFunction, element::Int)

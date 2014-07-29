@@ -44,6 +44,9 @@ reset(expr::Const) = begin
 end
 
 emptyval(expr::Const) = expr.val
+currval(expr::Const) = expr.val
+
+curvature(expr::Const) = :modular
 
 type Prod <: Expr
     first::Expr

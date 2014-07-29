@@ -40,3 +40,7 @@ function multiply(scalar, curvature)
         return curvature
     end
 end
+
+function composition(outer_curv, outer_mon, inner_curv, inner_mon)
+    
+end
