@@ -6,6 +6,7 @@ import Base.size
 
 include("Utils.jl")
 include("DSR.jl")
+include("DCP.jl")
 include("Expr.jl")
 
 include("functions/Modular.jl")
@@ -16,6 +17,7 @@ include("functions/LogDet.jl")
 include("functions/SetCover.jl")
 include("functions/TreeCover.jl")
 include("functions/Ising.jl")
+include("functions/Convex.jl")
 include("functions/Composition.jl")
 include("functions/Induced.jl")
 

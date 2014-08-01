@@ -41,6 +41,33 @@ function multiply(scalar, curvature)
     end
 end
 
-function composition(outer_curv, outer_mon, inner_curv, inner_mon)
+function non_decreasing(mon)
+    return mon == :constant || mon == :increasing
+end
+
+function non_increasing(mon)
+    return mon == :constant || mon == :decreasing
+end
+
+# curvatures could be :submodular, :supmodular or :modular
+# monotinicities could be :increasing, :decreasing or :constant
+function composition(outer_mon::Vector{Symbol}, inner_curv::Vector{Symbol}, inner_mon::Vector{Symbol})
+    @assert length(inner_curv) == length(inner_mon)
+    @assert length(outer_mon) == length(inner_curv)
+
+    result_submodular = true
     
+    for i = 1:length(outer_mon)
+        if inner_curv[i] == :modular && non_decreasing(inner_mon[i])
+            continue
+        end
+        if non_decreasing(outer_mon[i])
+            result_submodular &= non_decreasing(inner_mon[i]) && inner_curv[i] == :submodular
+        end
+        if non_increasing(outer_mon[i])
+            result_submodular &= non_increasing(inner_mon[i]) && inner_curv[i] == :supmodular
+        end
+    end
+
+    return result_submodular
 end

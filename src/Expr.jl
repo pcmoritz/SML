@@ -47,6 +47,7 @@ emptyval(expr::Const) = expr.val
 currval(expr::Const) = expr.val
 
 curvature(expr::Const) = :modular
+monotonicity(expr::Const) = :constant
 
 type Prod <: Expr
     first::Expr
