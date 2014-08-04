@@ -4,7 +4,7 @@ type Composition <: Expr
     phi::CVXExpr
     F # Vector{Expr}
     accum::Vector{Float64}
-    last_val::Float64
+    last_val::Vector{Float64}
 end
 
 # F is of type Vector{Expr} (can't encode that in Julia's type system)
@@ -21,7 +21,7 @@ Composition(phi::CVXExpr, F) = begin
     inner_curvature = map(curvature, F)
     inner_monotonicity = map(monotonicity, F)
     if composition(monotonicity(phi), inner_curvature, inner_monotonicity)
-        result = Composition(phi, F, zeros(size(phi)), 0.0)
+        result = Composition(phi, F, zeros(size(phi)), zeros(size(phi)))
         reset(result)
         return result
     end

@@ -20,10 +20,11 @@ curvature(func::ConvexFunction) = func.curvature
 monotonicity(func::ConvexFunction) = func.monotonicity
 size(func::ConvexFunction) = func.size
 evaluate(func::ConvexFunction, x::Vector{Float64}) = begin
-    if length(x) != 1
-        error("Trying to evaluate a scalar function on a vector")
-    end
-    func.func(x[1])
+    # if length(x) != 1
+    #     error("Trying to evaluate a scalar function on a vector")
+    # end
+    # func.func(x[1])
+    func.func(x)
 end
 
 type CVXSum <: CVXExpr
@@ -80,21 +81,28 @@ type CVXProd <: CVXExpr
     second::CVXExpr
 end
 
-evaluate(expr::CVXProd, x::Vector{Float64}) = expr.first * evaluate(expr.second, x)
+evaluate(expr::CVXProd, x::Vector{Float64}) = expr.first .* evaluate(expr.second, x)
 
 curvature(expr::CVXProd) = begin
-    curvature = curvature(expr.second)
-    result = Array(Symbol, size(func))
+    curv = curvature(expr.second)
+    result = Array(Symbol, size(expr))
     for i = 1:size(expr)
-        result[i] = cvx_multiply(expr.first[i], curvature[i])
+        result[i] = cvx_multiply(expr.first[i], curv[i])
     end
     return result
 end
 
-monotonicity(expr::CVXProd) = mon_multiply(expr.first, monotonicity(expr.second))
+monotonicity(expr::CVXProd) = begin
+    mon = monotonicity(expr.second)
+    result = Array(Symbol, size(expr))
+    for i = 1:size(expr.second)
+        result[i] = mon_multiply(expr.first[i], mon[i])
+    end
+    return result
+end
 size(expr::CVXProd) = size(expr.second)
 
-*(first::Real, second::CVXExpr) = CVXProd(float(first), second)
+*(first::Real, second::CVXExpr) = CVXProd([float(first) for i = 1:size(second)], second)
 *(first::CVXExpr, second::Real) = second * first
 
 
