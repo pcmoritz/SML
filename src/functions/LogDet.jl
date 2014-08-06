@@ -25,6 +25,12 @@ reset(expr::LogDet) = begin
     expr.k = 0
 end
 
+reset(expr::LogDet, element::Int) = begin
+    expr.k = chol_downdate!(element, expr.chol, expr.k)
+    expr.indices[element] = false
+    return nothing
+end
+
 incremental(expr::LogDet, element::Int) = begin
     expr.k = chol_update!(expr.sigma, expr.indices, element, expr.chol, expr.k)
     expr.indices[element] = true
@@ -35,6 +41,8 @@ evaluate(expr::LogDet, set::Vector{Int}) = Base.log(det(expr.sigma[set, set]))
 size(expr::LogDet) = Base.size(expr.sigma, 1)
 
 emptyval(expr::LogDet) = 0.0
+# TODO: Still allocates, fix that
+currval(expr::LogDet) = evaluate(expr, ind_to_set(expr.indices))
 
 # Based on the implementation of Andreas Krause, originally from Ram
 # Rajagopal, see sfo_chol_update.m in the SFO Toolbox
