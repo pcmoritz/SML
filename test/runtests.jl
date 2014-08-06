@@ -1,3 +1,5 @@
+# (c) Philipp Moritz, 2014
+
 using SML
 using Base.Test
 
@@ -70,16 +72,6 @@ A = SML.min_norm_point(F, [1:6], 1e-10)
 a = SML.evaluate(F, SML.ind_to_set(A))
 
 @test a <= x && a <= y
-
-# Test Entropy Function
-
-Sigma = [  2.26105    -0.71067    0.0398137  -0.448748;
- -0.71067     0.783202  -0.701331   -0.82428;
-  0.0398137  -0.701331   0.937804    1.11777; 
- -0.448748   -0.82428    1.11777     2.10302]
-
-F = SML.LogDet(Sigma)
-@test abs(SML.incremental(F, 1) + SML.incremental(F, 2) - SML.evaluate(F, [1, 2])) <= 1e-4
 
 # Test composition of functions
 

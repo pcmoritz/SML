@@ -28,22 +28,22 @@ end
 incremental(expr::LogDet, element::Int) = begin
     expr.k = chol_update!(expr.sigma, expr.indices, element, expr.chol, expr.k)
     expr.indices[element] = true
-    return 2.0 * log(expr.chol[expr.k, expr.k])
+    return 2.0 * Base.log(expr.chol[expr.k, expr.k])
 end
 
-evaluate(expr::LogDet, set::Vector{Int}) = log(det(expr.sigma[set, set]))
+evaluate(expr::LogDet, set::Vector{Int}) = Base.log(det(expr.sigma[set, set]))
 size(expr::LogDet) = Base.size(expr.sigma, 1)
 
 emptyval(expr::LogDet) = 0.0
 
 # Based on the implementation of Andreas Krause, originally from Ram
-# Rajagopal, see sfo_chol_update.m
+# Rajagopal, see sfo_chol_update.m in the SFO Toolbox
 function chol_update!(sigma::Array{Float64, 2}, A, index, chol, k)
     xtx = sigma[index, index]
     rhs = sigma[A, index]
     if k == 0
         k += 1
-        chol[k,k] = sqrt(xtx)
+        chol[k,k] = Base.sqrt(xtx)
         return k
     end
     # Beware: rhs gets changed here
@@ -52,8 +52,16 @@ function chol_update!(sigma::Array{Float64, 2}, A, index, chol, k)
     for j = 1:k
         chol[j,k+1] = rhs[j]
     end
-    chol[k+1,k+1] = sqrt(rpp)
+    chol[k+1,k+1] = Base.sqrt(rpp)
     k += 1
+    return k
+end
+
+# Using tridiagnoalization for cholesky downdate
+function chol_downdate!(index, chol, k)
+    without_column!(chol, index)
+    k -= 1
+    tridiagonalize(chol, k)
     return k
 end
 
