@@ -24,7 +24,7 @@ function IsingFunction(img::Array{Int,2}, coeffPix, coeffH, coeffV, coeffD)
     width = Base.size(img, 2)
     for j in 1:width
         for i in 1:height
-            value += abs(img[i,j])
+            value += Base.abs(img[i,j])
         end
     end
     return IsingFunction(img, zeros(height,width), height, width, coeffPix*value,

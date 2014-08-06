@@ -10,11 +10,23 @@ type ConvexFunction <: CVXExpr
     size::Int
 end
 
-square = ConvexFunction([:signed], [:convex], x -> x * x, 1)
-sqrt = ConvexFunction([:increasing], [:concave], x -> Base.sqrt(x), 1)
-log = ConvexFunction([:increasing], [:concave], x -> Base.log(x), 1)
-exp = ConvexFunction([:increasing], [:convex], x -> Base.log(x), 1)
-abs = ConvexFunction([:signed], [:convex], x -> Base.log(x), 1)
+square = ConvexFunction([:signed], [:convex], x -> x[1] * x[1], 1)
+sqrt = ConvexFunction([:increasing], [:concave], x -> Base.sqrt(x[1]), 1)
+log = ConvexFunction([:increasing], [:concave], x -> Base.log(x[1]), 1)
+exp = ConvexFunction([:increasing], [:convex], x -> Base.log(x[1]), 1)
+abs = ConvexFunction([:signed], [:convex], x -> Base.log(x[1]), 1)
+
+scalar_function(mono::Symbol, curv::Symbol, func::Function) =
+    ConvexFunction([mono], [curv], x -> func(x[1]), 1)
+
+cobb_douglas(alpha::Vector{Float64}) = begin
+    n = length(alpha)
+    if all(alpha .>= 1.0)
+        ConvexFunction([:decreasing for i in 1:n], [:concave for i in 1:n], x -> -prod(x .^ alpha), n)
+    else
+        error("Need to have alpha >= 1.")
+    end
+end
 
 curvature(func::ConvexFunction) = func.curvature
 monotonicity(func::ConvexFunction) = func.monotonicity
@@ -77,11 +89,11 @@ end
 +(first::CVXExpr, second::Real) = second + first
 
 type CVXProd <: CVXExpr
-    first::Vector{Float64}
+    first::Float64
     second::CVXExpr
 end
 
-evaluate(expr::CVXProd, x::Vector{Float64}) = expr.first .* evaluate(expr.second, x)
+evaluate(expr::CVXProd, x::Vector{Float64}) = expr.first * evaluate(expr.second, x)
 
 curvature(expr::CVXProd) = begin
     curv = curvature(expr.second)
@@ -102,7 +114,7 @@ monotonicity(expr::CVXProd) = begin
 end
 size(expr::CVXProd) = size(expr.second)
 
-*(first::Real, second::CVXExpr) = CVXProd([float(first) for i = 1:size(second)], second)
+*(first::Real, second::CVXExpr) = CVXProd(float(first), second)
 *(first::CVXExpr, second::Real) = second * first
 
 

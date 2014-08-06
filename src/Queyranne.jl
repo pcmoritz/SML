@@ -14,19 +14,13 @@ function pendentpair!(func::Expr, keys::Vector{Float64}, singleton::Vector{Float
         vold = vnew
         prev_val = incremental(func, i)
         fill!(keys, Inf)
-        for j = i:k
+        for j = i+1:k
             incremental(func, j)
             keys[j] = currval(func) - singleton[j]
-            print("keys ")
-            print(j)
-            print(" ")
-            print(keys[j])
-            print("\n")
-            reset(func, j)
         end
         argmin = -1
         curr_min = Inf
-        for j = i:k
+        for j = k:-1:i+1
             if keys[j] <= curr_min
                 argmin = j
                 curr_min = keys[j]
@@ -44,13 +38,6 @@ function merge!(partitions, j, k)
     return partitions[1:n-1]
 end
 
-# partitions = merge!(partitions, 1, 20)
-# partitions = merge!(partitions, 2, 3)
-# partitions = merge!(partitions, 1, 2)
-# partitions = merge!(partitions, 2, 3)
-# partitions = merge!(partitions, 3, 4)
-# partitions = merge!(partitions, 2, 3)
-
 function queyranne(func::Expr)
     p = size(func)
     k = p
@@ -65,7 +52,6 @@ function queyranne(func::Expr)
     min_set = [-1]
     for i = 1:(p-1)
         (t, u) = pendentpair!(merged_fun, keys, singleton)
-        println("t ", t, " u ", u)
         reset(merged_fun)
         val = incremental(merged_fun, u)
         reset(merged_fun, u)
@@ -76,6 +62,5 @@ function queyranne(func::Expr)
         partitions = merge!(partitions, t, u)
         merged_fun.G = partitions
     end
-    println(min_val)
-    println(min_set)
+    return min_set, min_val
 end

@@ -4,7 +4,7 @@ type Composition <: Expr
     phi::CVXExpr
     F # Vector{Expr}
     accum::Vector{Float64}
-    last_val::Vector{Float64}
+    last_val::Float64
 end
 
 # F is of type Vector{Expr} (can't encode that in Julia's type system)
@@ -21,7 +21,7 @@ Composition(phi::CVXExpr, F) = begin
     inner_curvature = map(curvature, F)
     inner_monotonicity = map(monotonicity, F)
     if composition(monotonicity(phi), inner_curvature, inner_monotonicity)
-        result = Composition(phi, F, zeros(size(phi)), zeros(size(phi)))
+        result = Composition(phi, F, zeros(size(phi)), 0.0)
         reset(result)
         return result
     end
@@ -43,7 +43,7 @@ incremental(func::Composition, element::Int) = begin
     n = size(func.phi)
     r = zeros(n)
     for i = 1:n
-        r[i] = incremental(func.F, element)
+        r[i] = incremental(func.F[i], element)
     end
     func.accum += r
     temp = func.last_val
@@ -52,5 +52,5 @@ incremental(func::Composition, element::Int) = begin
 end
 
 evaluate(func::Composition, set) = begin
-    return evaluate(func.phi, [evaluate(func.F, set)])
+    return evaluate(func.phi, map(x -> SML.evaluate(x, set), func.F))
 end

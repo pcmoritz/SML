@@ -73,6 +73,8 @@ incremental(expr::Prod, element::Int) = begin
     return incr
 end
 
+emptyval(expr::Prod) = emptyval(expr.first) * emptyval(expr.second)
+
 evaluate(expr::Prod, set) = begin
     return evaluate(expr.first, set) * evaluate(expr.second, set)
 end

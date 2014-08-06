@@ -36,6 +36,7 @@ size(expr::Induced) = Base.length(expr.G)
 
 reset(expr::Induced) = begin
     fill!(expr.set, 0)
+    reset(expr.func)
 end
 
 reset(expr::Induced, element::Int) = begin

@@ -39,7 +39,7 @@ function tridiagonalize(R, k)
     for j = 1 : k
         a = R[j,j]
         b = R[j+1,j]
-        h = sqrt(a*a + b*b)
+        h = Base.sqrt(a*a + b*b)
         c = a/h
         s = b/h
         for jj = j:k
@@ -76,7 +76,7 @@ function minimizer(func, init_perm, EPS)
     min_F = polytope_corner!(func, init_perm, s)
     S[:,1] = s
     ss = dot(s, s)
-    R[1,1] = sqrt(1.0 + ss)
+    R[1,1] = Base.sqrt(1.0 + ss)
     k = 1
     kx = 0
     xxp = 1e10
@@ -130,7 +130,7 @@ function minimizer(func, init_perm, EPS)
         # v = S[:,1:k].' * s +  ones(Float64, k)
         r = unsafe_trtrs!('U', 'T', 'N', R[1:k,1:k], v, k)
         # r = R[1:k,1:k].' \ v
-        rho = sqrt(1.0 + ss - dot(r, r))
+        rho = Base.sqrt(1.0 + ss - dot(r, r))
         newcol = [r, rho, zeros(Float64, length(init_perm) - k - 1)]
 
         # R = [R newcol]
