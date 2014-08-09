@@ -114,18 +114,19 @@ function minimizer(func, init_perm, EPS)
             end
         end
 
-        # fill!(v, 0.0)        
-        # for j = 1:k
-        #     for i = 1:n
-        #         v[j] += s[i] * S[i,j]
-        #     end
-        # end
-        
-        At_mul_B!(v, sub(S, 1:n, 1:k), s)
-
+        fill!(v, 0.0)        
         for j = 1:k
-            v[j] += 1.0
+            for i = 1:n
+                v[j] += s[i] * S[i,j]
+            end
         end
+
+        # Only works in Julia v0.3
+        # At_mul_B!(v, sub(S, 1:n, 1:k), s)
+
+        # for j = 1:k
+        #     v[j] += 1.0
+        # end
         
         # v = S[:,1:k].' * s +  ones(Float64, k)
         r = unsafe_trtrs!('U', 'T', 'N', R[1:k,1:k], v, k)
