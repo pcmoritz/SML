@@ -7,7 +7,7 @@
 
 type IsingFunction <: Expr
     img::Array{Int, 2}
-    mask::Array{Int, 2}
+    mask::Array{Float64, 2}
     height::Int
     width::Int
     value::Float64
