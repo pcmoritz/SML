@@ -60,3 +60,17 @@ val = SML.currval(F)
 SML.incremental(F, 3)
 SML.reset(F, 3)
 @test val == SML.currval(F)
+
+# Test large problem instance
+
+n = 200
+
+R = randn(n, n)
+M = R' * R
+
+F = SML.LogDet(M)
+
+SML.incremental(F, 1)
+SML.incremental(F, 3)
+
+L = [1, 3, 5, 7]

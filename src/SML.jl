@@ -28,4 +28,6 @@ include("Greedy.jl")
 include("MinNormPoint.jl")
 include("Queyranne.jl")
 
+include("../test/TestGraphCut.jl")
+
 end

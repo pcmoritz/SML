@@ -45,8 +45,6 @@ cut_fn = SML.CutFunction(SML.from_weight_matrix(G))
 keys = zeros(Float64, SML.size(cut_fn))
 used = zeros(Int, SML.size(cut_fn))
 
-SML.pendentpair!(cut_fn, keys, used)
-
 @test SML.curvature(cut_fn) == :submodular
 @test SML.signature(cut_fn) == :pos
 
@@ -86,7 +84,8 @@ rho = lambda ./ mu
 z = rho .* T
 y = rho ./ mu
 
-G = SML.Modular(z) + SML.Modular(-y) * SML.Composition(x -> 1/(1.0 - x), SML.Modular(rho))
+h = SML.scalar_function(:increasing, :concave, x -> 1/(1.0 - x))
+G = SML.Modular(z) + SML.Modular(-y) * SML.Composition(h, SML.Modular(rho))
 A = SML.min_norm_point(G, [1:p], 1e-13)
 
 a = SML.evaluate(G, SML.ind_to_set(A))

@@ -55,7 +55,11 @@ incremental(expr::Induced, element::Int) = begin
     acc = 0.0
     for next = expr.G[element]
         if expr.set[next] == 0
+            # println("next ", next)
+            # println("acc ", acc)
+            # println("inner", expr.func)
             acc += incremental(expr.func, next)
+            # println("acc ", acc)
             expr.set[next] = 1
         end
     end

@@ -15,7 +15,7 @@ LogDet(sigma::Array{Float64, 2}) = begin
     n = Base.size(sigma, 1)
     @assert n == Base.size(sigma, 2)
     @assert isposdef(sigma)
-    LogDet(sigma, BitArray(n), zeros(n, n), 1.0, 0)
+    LogDet(sigma, falses(n), zeros(n, n), 1.0, 0)
 end
 
 reset(expr::LogDet) = begin
@@ -26,15 +26,25 @@ reset(expr::LogDet) = begin
 end
 
 reset(expr::LogDet, element::Int) = begin
-    expr.k = chol_downdate!(element, expr.chol, expr.k)
+    # Why is this implementation unstable?
+    # expr.k = chol_downdate!(element, expr.chol, expr.k)
+    expr.k -= 1
     expr.indices[element] = false
     return nothing
 end
 
+# Why is this implementation unstable?
+# incremental(expr::LogDet, element::Int) = begin
+#     expr.k = chol_update!(expr.sigma, expr.indices, element, expr.chol, expr.k)
+#     expr.indices[element] = true
+#     return 2.0 * Base.log(expr.chol[expr.k, expr.k])
+# end
+
 incremental(expr::LogDet, element::Int) = begin
-    expr.k = chol_update!(expr.sigma, expr.indices, element, expr.chol, expr.k)
     expr.indices[element] = true
-    return 2.0 * Base.log(expr.chol[expr.k, expr.k])
+    expr.k += 1
+    ch = chol(expr.sigma[expr.indices, expr.indices])
+    return 2.0 * Base.log(ch[expr.k, expr.k])
 end
 
 evaluate(expr::LogDet, set::Vector{Int}) = Base.log(det(expr.sigma[set, set]))

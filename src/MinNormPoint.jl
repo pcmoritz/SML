@@ -36,13 +36,13 @@ function extend_column!(A, a, k)
 end
 
 function tridiagonalize(R, k)
-    for j = 1 : k
+    for j = 1 : k-1
         a = R[j,j]
         b = R[j+1,j]
         h = Base.sqrt(a*a + b*b)
         c = a/h
         s = b/h
-        for jj = j:k
+        for jj = j:k-1
             a = R[j,jj]
             b = R[j+1,jj]
             x = c*a + s*b

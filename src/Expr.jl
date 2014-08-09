@@ -28,6 +28,8 @@ evaluate(expr::Sum, set) =
 curvature(expr::Sum) =
     plus(curvature(expr.first), curvature(expr.second))
 
+emptyval(expr::Sum) = emptyval(expr.first) + emptyval(expr.second)
+
 +(first::Expr, second::Expr) = begin
     return Sum(first, second)
 end

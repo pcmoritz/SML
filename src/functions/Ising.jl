@@ -87,24 +87,24 @@ function evaluate(func::IsingFunction, set::Array{Int})
         y = y + 1
         image[x, y] = 1
     end
-    println(image)
+    # println(image)
     evaluate_image(func, image)
 end
 
 function evaluate_image(func::IsingFunction, set::Array{Int, 2})
-    delta = abs(set - func.img)
+    delta = Base.abs(set - func.img)
     Epix = sum(delta) # energy through pixelwise disagreement (measured in units of coeffPix)
-    println("Epix")
-    println(Epix)
-    Ehor = sum(abs(set[:, 2:func.width] - set[:,1:func.width-1]))
-    println("Ehor")
-    println(Ehor)
-    Evert = sum(abs(set[2:func.height,:] - set[1:func.height-1,:]))
-    println("Evert")
-    println(Evert)
-    Ediag = sum(abs(set[1:func.height-1, 1:func.width-1] - set[2:func.height, 2:func.width])
-        + abs(set[2:func.height, 1:func.width-1] - set[1:func.height-1,2:func.width]))
-    println("Ediag")
-    println(Ediag)
+    # println("Epix")
+    # println(Epix)
+    Ehor = sum(Base.abs(set[:, 2:func.width] - set[:,1:func.width-1]))
+    # println("Ehor")
+    # println(Ehor)
+    Evert = sum(Base.abs(set[2:func.height,:] - set[1:func.height-1,:]))
+    # println("Evert")
+    # println(Evert)
+    Ediag = sum(Base.abs(set[1:func.height-1, 1:func.width-1] - set[2:func.height, 2:func.width])
+        + Base.abs(set[2:func.height, 1:func.width-1] - set[1:func.height-1,2:func.width]))
+    # println("Ediag")
+    # println(Ediag)
     return func.coeffPix * Epix + func.coeffH * Ehor + func.coeffV * Evert + func.coeffD * Ediag
 end
